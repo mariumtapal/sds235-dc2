@@ -1,30 +1,63 @@
 ---
 title: "EDA - Marium"
 author: "Marium Tapal"
-date: "3/9/2021"
+date: "3/13/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r packages, include=FALSE}
+library(tidyverse)
+library(lubridate)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r load-data, message=FALSE}
+comm_data_Fri <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Communication Data/comm-data-Fri.csv")
+comm_data_Sat <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Communication Data/comm-data-Sat.csv")
+comm_data_Sun <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Communication Data/comm-data-Sun.csv")
 ```
 
-## Including Plots
+```{r data-wrangling, message=FALSE}
+glimpse(comm_data_Fri)
 
-You can also embed plots, for example:
+# change timestamp to date and times
+# could have done this after rbind but if we want to use dfs separately 
+comm_data_Fri$Timestamp <- parse_date_time(comm_data_Fri$Timestamp, "YmdHMS")
+comm_data_Sat$Timestamp <- parse_date_time(comm_data_Sat$Timestamp, "YmdHMS")
+comm_data_Sun$Timestamp <- parse_date_time(comm_data_Sun$Timestamp, "YmdHMS")
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# add day column to data
+comm_data_Fri <- comm_data_Fri %>% mutate(day = "Friday")
+comm_data_Sat <- comm_data_Sat %>% mutate(day = "Saturday")
+comm_data_Sun <- comm_data_Sun %>% mutate(day = "Sunday")
+
+# Make one df
+data <- rbind(comm_data_Fri, comm_data_Sat, comm_data_Sun)
+
+# counts of data
+
+# sent
+sent_data <- data %>% group_by(from) %>% count()
+# 9,429 people sent a message
+# plot this by count?
+ggplot(sent_data, aes(x=from, y = n)) + geom_point()
+# outliers - looks like two points with > 50000 messages sent
+# get id's of outliers
+sent_data %>% filter(n>50000)
+# id numbers 839736 and 1278894
+
+
+# received
+received_data <- data %>% group_by(to) %>% count()
+# 9,391 people received a message
+# plot this by count?
+ggplot(received_data, aes(x = to, y = n)) + geom_point()
+# outliers - looks like points with > 50000 messages received
+# get id's of outliers
+received_data %>% filter(n>50000)
+# id numbers 839736 and 1278894 and external
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+ideas:
+- communication by location - network graph?
+- group by ids? how many people were there
