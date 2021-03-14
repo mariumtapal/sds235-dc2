@@ -14,68 +14,140 @@ library(plotly)
 
 ```{r loading files}
 park_movement_Fri <- read.csv("/Users/llow/Desktop/visual analytics/dc2/DC2-data/Movement Data/park-movement-Fri.csv")
+park_movement_Sat <- read.csv("/Users/llow/Desktop/visual analytics/dc2/DC2-data/Movement Data/park-movement-Sat.csv")
+park_movement_Sun <- read.csv("/Users/llow/Desktop/visual analytics/dc2/DC2-data/Movement Data/park-movement-Sun.csv")
 ```
 
 
-```{r}
-grouped <- park_movement_Fri %>%
+```{r revisualizing data in df}
+grouped_fri <- park_movement_Fri %>%
   group_by(id) %>%
   summarize(Timestamp, type, X, Y)
-grouped
+grouped_fri
+
+grouped_sat <- park_movement_Sat %>%
+  group_by(id) %>%
+  summarize(Timestamp, type, X, Y)
+grouped_sat
+
+grouped_sun <- park_movement_Sun %>%
+  group_by(id) %>%
+  summarize(Timestamp, type, X, Y)
+grouped_sun
 ```
 
-```{r}
-frequent_id <- park_movement_Fri %>%
+```{r people who moved around the most}
+fri_frequent_id <- park_movement_Fri %>%
   group_by(id) %>%
   count(id, sort = TRUE) %>%
-  filter(n > 3000)
-frequent_id
+  filter(n >= 2900)
+fri_frequent_id
+
+sat_frequent_id <- park_movement_Sat %>%
+  group_by(id) %>%
+  count(id, sort = TRUE) %>%
+  filter(n >= 2379)
+sat_frequent_id
+
+sun_frequent_id <- park_movement_Sun %>%
+  group_by(id) %>%
+  count(id, sort = TRUE) %>%
+  filter(n >= 2400)
+sun_frequent_id
 ```
 
-```{r}
-frequent_id <- ggplot(data = frequent_id, aes(x = reorder(id, n), y = n)) +
+```{r see which "most frequent" people overlap on which days}
+freq_fri_sat_join <- full_join(fri_frequent_id, sat_frequent_id,  by = "id")
+freq_fri_sat_join
+
+#can't compare sun because id wont become an integer value??
+# freq_fri_sun_join <- full_join(fri_frequent_id, sun_frequent_id,  by = "id")
+# freq_fri_sun_join
+# 
+# freq_sat_sun_join <- full_join(sat_frequent_id, sun_frequent_id,  by = "id")
+# freq_sat_sun_join
+```
+
+
+```{r visualize most frequent ids}
+freq_fri_plot <- ggplot(data = fri_frequent_id, aes(x = reorder(id, n), y = n)) +
   geom_bar(stat = "identity")
-frequent_id
+freq_fri_plot
+
+freq_sat_plot <- ggplot(data = sat_frequent_id, aes(x = reorder(id, n), y = n)) +
+  geom_bar(stat = "identity")
+freq_sat_plot
+
+freq_sun_plot <- ggplot(data = sun_frequent_id, aes(x = reorder(id, n), y = n)) +
+  geom_bar(stat = "identity")
+freq_sun_plot
+```
+
+```{r see x and y location of 331284 on friday}
+grouped_331284 <- park_movement_Fri %>%
+  group_by(id) %>%
+  filter (id == 331284)
+grouped_331284
+
+px_331284 <- ggplot(grouped_331284, aes(x = Timestamp, y = X)) +
+  geom_point() 
+px_331284
+
+py_331284 <- ggplot(grouped_331284, aes(x = Timestamp, y = Y)) +
+  geom_point() 
+py_331284
+```
+
+```{r}
+sun_1529852 <- park_movement_Sun %>%
+  group_by(id) %>%
+  summarize(Timestamp, type, X, Y) %>%
+  mutate(id = as.character(id)) %>%
+  filter(id == 1529852)
+sun_1529852
+
 ```
 
 
 ```{r}
+library(gapminder)
+library(ggplot2)
+library(gganimate)
 
-data("move_data", package = "moveVis") # move class object
-# if your tracks are present as data.frames, see df2move() for conversion
+gapminder
 
-# align move_data to a uniform time scale
-m <- align_move(move_data, res = 4, unit = "mins")
-
-# create spatial frames with a OpenStreetMap watercolour map
-frames <- frames_spatial(m, path_colours = c("red", "green", "blue"),
-                         map_service = "osm", map_type = "watercolor", alpha = 0.5) %>%
-  add_labels(x = "Longitude", y = "Latitude") %>% # add some customizations, such as axis labels
-  add_northarrow() %>%
-  add_scalebar() %>%
-  add_timestamps(m, type = "label") %>%
-  add_progress()
-
-frames[[100]] # preview one of the frames, e.g. the 100th frame
-
-# animate frames
-animate_frames(frames, out_file = "moveVis.gif")
+ggplot(sun_1529852, aes(x = X, y = Y, color = id)) +
+  geom_point(alpha = 0.7, show.legend = FALSE) +
+  scale_x_log10() +
+  # Here comes the gganimate specific bits
+  labs(title = 'Year: {frame_time}', x = 'GDP per capita', y = 'life expectancy') +
+  transition_time(Timestamp) +
+  ease_aes('linear')
 ```
-
 
 ```{r}
-unique(timestamps(move_data))
-timeLag(move_data, unit = "mins")
-
-move_data <- align_move(move_data, res = 4, unit = "mins")
-
-frames <- frames_spatial(move_data, path_colours = c("red", "green", "blue"),
-                         map_service = "osm", map_type = "watercolor", alpha = 0.5)
-
-length(frames) # number of frames
-frames[[100]] # display one of the frames
-
-
+p <- sun_1529852 %>%
+  plot_ly(
+    x = ~ X, 
+    y = ~ Y, 
+    # size = ~pop, 
+    color = ~ id, 
+    # frame = ~ Timestamp, 
+    # text = ~country, 
+    hoverinfo = "text",
+    type = 'scatter',
+    mode = 'markers'
+  ) %>%
+  layout(
+    xaxis = list(
+      type = "log"
+    )
+  )
+p
 ```
+
+
+
+
 
 
