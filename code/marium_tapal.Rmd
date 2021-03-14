@@ -95,11 +95,39 @@ p6
 # between the first 30 mins - 12-12:30?
 # the spikes in every hour could be regular messages sent by employees?
 ggsave("noon.jpg")
+
+
+# check with received messages
+# saturday
+hour_sat_to <- data2 %>% 
+  filter(to == 839736 | to == 1278894) %>% 
+  filter(day == "Saturday") %>% 
+  group_by(to, hour) %>% 
+  count()
+p7 <- ggplot(hour_sat_to, aes(x = hour, y = n)) + geom_line()
+p7 # pretty even
+
+# sunday
+hour_sun_to <- data2 %>% 
+  filter(to == 839736 | to == 1278894) %>% 
+  filter(day == "Sunday") %>% 
+  group_by(from, hour) %>% 
+  count()
+p8 <- ggplot(hour_sun_to, aes(x = hour, y = n)) + geom_line()
+p8 # peak sunday afternoon too
+
+# look into minutes around on Sunday at 11 am - 4 pm
+# manually changed hour from 11 to 16 to see the changes
+hourmin_sun_to <- data2 %>% 
+  filter(to == 839736 | from == 1278894) %>% 
+  filter(day == "Sunday", hour == 12) %>% 
+  group_by(from, minute) %>% 
+  count()
+p9 <- ggplot(hourmin_sun_to, aes(x = minute, y = n)) + geom_line()
+p9 
+# between the first 30 mins - 12:00-15:40?
+# the spikes in every hour could be regular messages sent by employees?
 ```
-
-
-
-
 
 
 ```{r}
