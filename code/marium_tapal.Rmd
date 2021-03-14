@@ -8,6 +8,9 @@ output: html_document
 ```{r packages, include=FALSE}
 library(tidyverse)
 library(lubridate)
+library(parcats)
+library(ggforce)
+library(patchwork)
 ```
 
 ```{r load-data, message=FALSE}
@@ -33,30 +36,83 @@ comm_data_Sun <- comm_data_Sun %>% mutate(day = "Sunday")
 # Make one df
 data <- rbind(comm_data_Fri, comm_data_Sat, comm_data_Sun)
 
+# factor ids as levels instead of numeric
+data <- data %>% mutate(to = as.factor(to),
+                        from = as.factor(from))
+
 # counts of data
-
-# sent
-sent_data <- data %>% group_by(from) %>% count()
-# 9,429 people sent a message
-# plot this by count?
-ggplot(sent_data, aes(x=from, y = n)) + geom_point()
-# outliers - looks like two points with > 50000 messages sent
-# get id's of outliers
-sent_data %>% filter(n>50000)
-# id numbers 839736 and 1278894
-
-
-# received
-received_data <- data %>% group_by(to) %>% count()
-# 9,391 people received a message
-# plot this by count?
-ggplot(received_data, aes(x = to, y = n)) + geom_point()
-# outliers - looks like points with > 50000 messages received
-# get id's of outliers
-received_data %>% filter(n>50000)
+sent_data <- data %>% group_by(from, day) %>% count() %>% filter(n>5000)
+p1 <- ggplot(sent_data, aes(x=from, y = n, color = day)) + geom_point()
+received_data <- data %>% group_by(to, day) %>% count() %>% filter(n>5000)
+p2 <- ggplot(received_data, aes(x = to, y = n, color = day)) + geom_point()
 # id numbers 839736 and 1278894 and external
 
+p1 + p2
+
+# data sent and received tog
+data_from_to <- data %>% group_by(from, to, day) %>% count()
+p3 <- ggplot(data_from_to, aes(x = to, y = n, color = day)) + geom_point()
 ```
+
+In my exploratory data analysis above, the first things I figured out were that the id numbers 839736 and 1278894 and external person(s) had an excessive amount of messages sent and received. See plots p1 and p2.
+
+These two id's don't match with the movement data - which suggests that these might be park service employees. (Hypothesis)
+
+I further investigated this spike of messages and found out (in p3) that something was happening on Sunday, which might explain the excessive number of messages from and to the employees. 
+
+Looking at the time line of these messages sent:
+
+```{r}
+data2 <- data %>% mutate(hour = hour(Timestamp),
+                         minute = minute(Timestamp))
+# saturday
+hour_sat <- data2 %>% 
+  filter(from == 839736 | from == 1278894) %>% 
+  filter(day == "Saturday") %>% 
+  group_by(from, hour) %>% 
+  count()
+p4 <- ggplot(hour_sat, aes(x = hour, y = n)) + geom_line()
+p4 # pretty even
+
+# sunday
+hour_sun <- data2 %>% 
+  filter(from == 839736 | from == 1278894) %>% 
+  filter(day == "Sunday") %>% 
+  group_by(from, hour) %>% 
+  count()
+p5 <- ggplot(hour_sun, aes(x = hour, y = n)) + geom_line()
+p5 # peak looks like around noon and every two hours
+ggsave("hours.jpg")
+
+# look into minutes around on Sunday at noon
+hourmin_sun <- data2 %>% 
+  filter(from == 839736 | from == 1278894) %>% 
+  filter(day == "Sunday", hour == 12) %>% 
+  group_by(from, minute) %>% 
+  count()
+p6 <- ggplot(hourmin_sun, aes(x = minute, y = n)) + geom_line()
+p6 
+# between the first 30 mins - 12-12:30?
+# the spikes in every hour could be regular messages sent by employees?
+ggsave("noon.jpg")
+```
+
+
+
+
+
+
+```{r}
+# # look into id numbers 839736 and 1278894 and external more
+# sent_ids <- c(839736, 1278894)
+# received_ids <- c(839736, 1278894, "external")
+# 
+# location <- data %>% filter(to == c(839736, 1278894))
+# ggplot(location, aes(x = location, fill = to)) + geom_bar(position = "dodge")
+```
+
+
+- look into hours on sunday
 
 ideas:
 - communication by location - network graph?
