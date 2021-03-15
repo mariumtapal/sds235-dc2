@@ -10,6 +10,7 @@ library(raster)
 library(ggplot2)
 library(tidyverse)
 library(plotly)
+library(gganimate)
 ```
 
 ```{r loading files}
@@ -98,54 +99,51 @@ py_331284 <- ggplot(grouped_331284, aes(x = Timestamp, y = Y)) +
 py_331284
 ```
 
-```{r}
+```{r cleaning up date}
+# library(lubridate)
+# park_movement_Sun
+# park_movement_Sun$Timestamp <- parse_date_time(park_movement_Sun$Timestamp, "YmdHMS")
+# park_movement_Sun
+# 
+# 
+# sun_1529852 <- park_movement_Sun %>%
+#   group_by(id) %>%
+#   summarize(Timestamp, type, X, Y) %>%
+#   mutate(id = as.character(id), 
+#          time_12 = format(Timestamp, "%H:%M:%S")) %>%
+#   filter(id == 1529852) %>%
+#   slice(1:50)
+# sun_1529852
+```
+
+```{r looking at sunay freqent ids}
 sun_1529852 <- park_movement_Sun %>%
   group_by(id) %>%
   summarize(Timestamp, type, X, Y) %>%
-  mutate(id = as.character(id)) %>%
-  filter(id == 1529852)
+  filter(id == 1529852 | id == 1566766 | id == 1131984 | id == 1934504 | id == 871111) %>%
+  slice(1:50)
 sun_1529852
 
 ```
 
-
-```{r}
-library(gapminder)
-library(ggplot2)
-library(gganimate)
-
-gapminder
-
-ggplot(sun_1529852, aes(x = X, y = Y, color = id)) +
-  geom_point(alpha = 0.7, show.legend = FALSE) +
-  scale_x_log10() +
-  # Here comes the gganimate specific bits
-  labs(title = 'Year: {frame_time}', x = 'GDP per capita', y = 'life expectancy') +
-  transition_time(Timestamp) +
-  ease_aes('linear')
+```{r example plot}
+# gapminder
+# 
+# ggplot(sun_1529852, aes(x = X, y = Y, color = id)) +
+#   geom_point(alpha = 0.7, show.legend = FALSE) +
+#   scale_x_log10() +
+#   # Here comes the gganimate specific bits
+#   labs(title = 'Year: {frame_time}', x = 'GDP per capita', y = 'life expectancy') +
+#   transition_time(Timestamp) +
+#   ease_aes('linear')
 ```
 
-```{r}
-p <- sun_1529852 %>%
-  plot_ly(
-    x = ~ X, 
-    y = ~ Y, 
-    # size = ~pop, 
-    color = ~ id, 
-    # frame = ~ Timestamp, 
-    # text = ~country, 
-    hoverinfo = "text",
-    type = 'scatter',
-    mode = 'markers'
-  ) %>%
-  layout(
-    xaxis = list(
-      type = "log"
-    )
-  )
-p
+```{r animating sunday frequent ids}
+gg <- ggplot(sun_1529852, aes(X, Y, color = id, ids = id)) +
+  geom_point(aes(frame = Timestamp))
+gg
+ggplotly(gg)
 ```
-
 
 
 
