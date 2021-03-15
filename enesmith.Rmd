@@ -401,6 +401,7 @@ pavillion_frequents <- pavillion_data %>%
 ```
 
 ```{r}
+#can't figure out why it can't show more than one point at the same time
 fig7 <- pavillion_frequents %>% 
   plot_ly(x = ~X,
     y = ~Y,
