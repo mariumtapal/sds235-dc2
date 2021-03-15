@@ -52,15 +52,9 @@ p1 + p2
 # data sent and received tog
 data_from_to <- data %>% group_by(from, to, day) %>% count()
 p3 <- ggplot(data_from_to, aes(x = to, y = n, color = day)) + geom_point()
+p3
+ggsave("p3.jpg")
 ```
-
-In my exploratory data analysis above, the first things I figured out were that the id numbers 839736 and 1278894 and external person(s) had an excessive amount of messages sent and received. See plots p1 and p2.
-
-These two id's don't match with the movement data - which suggests that these might be park service employees. (Hypothesis)
-
-I further investigated this spike of messages and found out (in p3) that something was happening on Sunday, which might explain the excessive number of messages from and to the employees. 
-
-Looking at the time line of these messages sent:
 
 ```{r}
 data2 <- data %>% mutate(hour = hour(Timestamp),
@@ -129,19 +123,14 @@ p9
 # the spikes in every hour could be regular messages sent by employees?
 ```
 
+Looking into the communication data, the question we first looked to answer who was communicating with whom? Are there anomalies? If so, do they tell us anything about solving the crime?
 
-```{r}
-# # look into id numbers 839736 and 1278894 and external more
-# sent_ids <- c(839736, 1278894)
-# received_ids <- c(839736, 1278894, "external")
-# 
-# location <- data %>% filter(to == c(839736, 1278894))
-# ggplot(location, aes(x = location, fill = to)) + geom_bar(position = "dodge")
-```
+In the initial exploratory data analysis, looking into the total counts of messages sent and received, there were very apparent outliers. The id numbers 839736 and 1278894 (and external person(s)) had an excessive amount of messages sent and received (more than 5000 per day per person). Plots p1 and p2.
 
+Our guess was to track the movements of these individuals, but the movement data doesn’t contain their movements. We hypothesize that these are park employees since their communication with visitors is being tracked but not their movement.
 
-- look into hours on sunday
+Furthering this investigation of what caused these spikes in the number of messages sent and received, p3 (marium’s plot) suggests that something was happening on Sunday.  We looked into the hourly and minutely data, where there was an abrupt increase of messages sent at 12:00 pm which lasted for the next 30 mins (p5 & p6). For the messages received, this also started at noon and continued until 3:40 pm on Sunday afternoon (p8 and versions of p9).
+
 
 ideas:
-- communication by location - network graph?
-- group by ids? how many people were there
+- group by ids? how many people were there and where
