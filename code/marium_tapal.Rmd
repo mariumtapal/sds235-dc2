@@ -129,7 +129,7 @@ In the initial exploratory data analysis, looking into the total counts of messa
 
 Our guess was to track the movements of these individuals, but the movement data doesn’t contain their movements. We hypothesize that these are park employees since their communication with visitors is being tracked but not their movement.
 
-Furthering this investigation of what caused these spikes in the number of messages sent and received, p3 (marium’s plot) suggests that something was happening on Sunday.  We looked into the hourly and minutely data, where there was an abrupt increase of messages sent at 12:00 pm which lasted for the next 30 mins (p5 & p6). For the messages received, this also started at noon and continued until 3:40 pm on Sunday afternoon (p8 and versions of p9).
+Furthering this investigation of what caused these spikes in the number of messages sent and received, p3 suggests that something was happening on Sunday. We looked into the hourly and minutely data, where there was an abrupt increase of messages sent at 12:00 pm which lasted for the next 30 mins (p5 & p6). For the messages received, this also started at noon and continued until 3:40 pm on Sunday afternoon (p8 and versions of p9).
 
 
 ideas:
