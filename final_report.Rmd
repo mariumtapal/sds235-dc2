@@ -185,6 +185,7 @@ sun_1529852 <- park_movement_Sun %>%
 sun_1529852
 gg <- ggplot(sun_1529852, aes(X, Y, color = id, ids = id)) +
   geom_point(aes(frame = Timestamp))
+gg
 ```
 When factoring time, we noticed that almost none of the top five most frequently moving ids on sunday overlapped with each other – that is, each id was found moving at a different time. This could be a coincidence (maybe workers were transporting a specific tool across DINOFUN WORLD). However, this makes us suspicious that these particular id were meeting up for nefarious reasons.  
 
