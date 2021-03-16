@@ -50,31 +50,40 @@ We have had a lot of suspicions, but I think we can make an estimated guess abou
 We believe that the distraction in the pavilion happened out of jealousy.
 
 ### When did the crime occur?
+
 We think that on Sunday, sometime in the morning, right before noon due to the movement and communication data we have gathered.
 
 ### Where did the crime take place?
+
 Someone damaged something in the Creighton Pavilion as we knew from the news article that "individuals who vandalized a pavilion exhibiting Jones’s memorabilia and made off with an Olympic medal and possibly other irreplaceable items."
 
 ### Who are the most likely suspects in the crime?
+
 We believe it could be Lonzo, Eddie and/or Marcus.
 
 ## Characterize different kinds of groups that visited the park on this weekend
+
 We believe there may have been families and school groups during the weekend as there was a large gathering in the Kiddie area, and clusters of id's communicating with each other.
 
 ### Are there notable differences in the patterns of activity on in the park across the three days?
+
 The noteable differences in the patterns of activity are the increase in communication at certain parts of the day on Sunday, as a result to the crime. 
 
 ### What anomalies or unusual movement patterns do you see?
+
 It is possible that when 575508 and 320392 both went to the pavilion at 12:23 (coming from different directions) they did something (stole the medal?) and left a little less than a minute apart, both traveling to the right. From there 575508 could have ridden Wrightiraptor Mountain again to avoid suspicion, then traveled to Galactasaurus Rage to meet up with 1826870, pass off the medal, and head their separate ways.We think these id's are suspicious. In addition, we looked at numbers 1529852, 1566766, 1131984 and 1934504 around the Kiddie Land area, and this may have been some time of group; a family perhaps.
 
 ### Who is communicating, with whom, when and where?
+
 It looks like id:839736 and id:1278894 are communicating the most on each day, with messages exceeding 5000 per day per person. Initially we thought these may have been the suspects, but we are not convinved because the ones committing the crime would not be communicating this actively over the app in fear of being traced. We hypothesize that these are park employees since their communication with visitors is being tracked but not their movement.
 
 
 ### Scott Jones is a VIP (not a paying customer) and therefore does not have an ID. Describe his activities in the park during the three-day weekend.
+
 Some activities that we know Scott participated in based on the calendar of events for the weekend, are a Q&A with the audience, a live demonstration of his soccer moves and two shows daily at the Amazing Scott Showcase Show.
 
 ### Were there any issues with park operations during the three-day weekend?
+
 We believe the app may have not always worked as well all the time on all days due to weird communication patterns such as random spikes throughout the weekend and big drops..
 
 
@@ -209,15 +218,18 @@ sun_frequent_id <- park_movement_Sun %>%
   filter(n >= 2400)
 
 freq_fri_plot <- ggplot(data = fri_frequent_id, aes(x = reorder(id, n), y = n)) +
-  geom_bar(stat = "identity")
+  geom_bar(stat = "identity") +
+  labs(x = "ID value", x = "Number of Movements", title = "ID Values with Most Movements on Friday")
 freq_fri_plot
 
 freq_sat_plot <- ggplot(data = sat_frequent_id, aes(x = reorder(id, n), y = n)) +
-  geom_bar(stat = "identity")
+  geom_bar(stat = "identity") +
+  labs(x = "ID value", x = "Number of Movements", title = "ID Values with Most Movements on Saturday")
 freq_sat_plot
 
 freq_sun_plot <- ggplot(data = sun_frequent_id, aes(x = reorder(id, n), y = n)) +
-  geom_bar(stat = "identity")
+  geom_bar(stat = "identity") +
+  labs(x = "ID value", x = "Number of Movements", title = "ID Values with Most Movements on Sunday")
 freq_sun_plot
 ```
 
@@ -231,15 +243,16 @@ sun_1529852 <- park_movement_Sun %>%
   slice(1:50)
 sun_1529852
 gg <- ggplot(sun_1529852, aes(X, Y, color = id, ids = id)) +
-  geom_point(aes(frame = Timestamp))
+  geom_point(aes(frame = Timestamp)) +
+  labs(x = "X Coordinate", y = "Y Coordinate", title = "Locations of Most Frequently Moving ID Values")
 gg
 ```
+
 When factoring time, we noticed that almost none of the top five most frequently moving ids on sunday overlapped with each other – that is, each id was found moving at a different time. This could be a coincidence (maybe workers were transporting a specific tool across DINOFUN WORLD). However, this makes us suspicious that these particular id were meeting up for nefarious reasons.  
 
 ```{r move-data-3}
 ggplotly(gg)
 ```
-
 
 To narrow the amount of movement data we were looking at, we filtered the data down to movements between 12 and 12:30 PM, as that is when the abrupt increase in messages sent occurred. Furthermore, we know the crime occurred at the Creighton Pavilion, so we filtered the movement data to only include coordinates encompassing the pavilion (between 20 and 45 for X and 15 and 40 for Y). 
 
@@ -272,7 +285,6 @@ pavillion_frequent2 <- pavillion_data %>%
 pavillion_frequent3 <- pavillion_data %>%
   filter(id == 1826870)
 ```
-
 
 575508 is the id that looks the most suspicious. Their movement starts out at 12:10, when they go and check into Wrightiraptor Mountain ride. They ride this twice. Then they go to the pavilion around 12:23, leave and go back to the same ride and do it a third time. Following this, they leave and go to the left, passing the Galactasaurus Rage ride at 12:29 but not riding it. See figures 1 and 2.
 
@@ -420,7 +432,7 @@ fig4 <- fig4 %>% layout(
 fig4
 ```
 
-Finally, 1826870 starts at 12:09 and goes past the pavilion but not into it at 12:10. From there they go down to the atmosfear ride, which they check into at 12:12. When they leave at 12:14 they go back the way they came, and this time go into the pavilion at 12:16. Then they go and check in to Galactasaurus Rage at 12:20, which they exit at 12:29. They exit the ride at the exact time id 575508 is passing by the ride, but then they go in the opposite direction of 575508. See figs 5 and 6 in enesmith.rmd.
+Finally, 1826870 starts at 12:09 and goes past the pavilion but not into it at 12:10. From there they go down to the atmosfear ride, which they check into at 12:12. When they leave at 12:14 they go back the way they came, and this time go into the pavilion at 12:16. Then they go and check in to Galactasaurus Rage at 12:20, which they exit at 12:29. They exit the ride at the exact time id 575508 is passing by the ride, but then they go in the opposite direction of 575508. 
 
 ```{r}
 fig5 <- pavillion_frequent3 %>%
@@ -512,8 +524,6 @@ As my partners and I started closing in on Sunday being the day of the crime, I 
 Due to my mistrust of circles and pie chart look-alikes, I checked the hours on Sunday with a different visualization that also clarified my point about the crime happening before or right around noon.
 
 ![](images/sunday.png)
-
-
 
 # **Conslusion**
 
