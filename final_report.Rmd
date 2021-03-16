@@ -195,16 +195,222 @@ ggplotly(gg)
 
 To narrow the amount of movement data we were looking at, we filtered the data down to movements between 12 and 12:30 PM, as that is when the abrupt increase in messages sent occurred. Furthermore, we know the crime occurred at the Creighton Pavilion, so we filtered the movement data to only include coordinates encompassing the pavilion (between 20 and 45 for X and 15 and 40 for Y). 
 
-To get an idea of who was most active around the pavilion within this time frame, we grouped by id and took the top 3 ids with the largest number of movements. These were 575508, 320392, and 1826870, which had 93, 90, and 88 movements, respectively. Looking at their movements over time, they all have an interesting pattern of walking different sections around the pavilion, often doubling back. Furthermore, looking at how their movements overlap is interesting.
+```{r}
+#filter data to just include times 12-12:30 on Sunday and the pavillion (32 on map)
+pavillion_data <- park_movement_Sun %>% 
+  filter(Timestamp > "2014-6-08 12:00:00" & Timestamp < "2014-6-08 12:31:00" ) %>% 
+  filter(X > 20 & X < 45) %>% 
+  filter(Y > 10 & Y < 40)
+```
 
-575508 is the id that looks the most suspicious. Their movement starts out at 12:10, when they go and check into Wrightiraptor Mountain ride. They ride this twice. Then they go to the pavilion around 12:23, leave and go back to the same ride and do it a third time. Following this, they leave and go to the left, passing the Galactasaurus Rage ride at 12:29 but not riding it. See figs 1 and 2 in enesmith.rmd.
+To get an idea of who was most active around the pavilion within this time frame, we grouped by ID and took the top 3 ids with the largest number of movements. These were 575508, 320392, and 1826870, which had 93, 90, and 88 movements, respectively. Looking at their movements over time, they all have an interesting pattern of walking different sections around the pavilion, often doubling back. Furthermore, looking at how their movements overlap is interesting.
 
-320392’s movement starts at 12:07, and they go to the pavilion at 12:08. Then they turn and go back the way they came, going down to ride the Galactasaurus Rage at 12:11 and leaving it at 12:20. From there they go back into the pavilion at 12:23 and then travel on to the right. See enesmith.rmd figs 3 and 4.
+```{r}
+#check which ids had most movements around here at this time
+pavillion_data %>% 
+  group_by(id) %>% 
+  count(id, sort = TRUE) %>% 
+  filter(n > 80)
+
+#filter to top id 575508
+pavillion_frequent1 <- pavillion_data %>% 
+  filter(id == 575508)
+
+#filter to second top id 320392
+pavillion_frequent2 <- pavillion_data %>% 
+  filter(id == 320392)
+
+#filter to third top id 1826870
+pavillion_frequent3 <- pavillion_data %>% 
+  filter(id == 1826870)
+```
+
+
+575508 is the id that looks the most suspicious. Their movement starts out at 12:10, when they go and check into Wrightiraptor Mountain ride. They ride this twice. Then they go to the pavilion around 12:23, leave and go back to the same ride and do it a third time. Following this, they leave and go to the left, passing the Galactasaurus Rage ride at 12:29 but not riding it. See figures 1 and 2.
+
+```{r}
+fig1 <- pavillion_frequent1 %>% 
+  plot_ly(x = ~X,
+    y = ~Y,
+    type = 'scatter',
+    mode = 'markers',
+    color = ~id,
+    colors = "dark green",
+    text = ~Timestamp,
+    title = "Figure 1: Static Plot of 575508's movement from 12 to 12:30 PM") %>%
+    layout(
+      images = list(source = "https://raw.githubusercontent.com/mariumtapal/sds235-dc2/main/Park%20Map.jpg",
+           xref = "x",
+           yref = "y",
+           x = 0,
+           y = 99,
+           sizex = 100,
+           sizey = 100,
+           sizing = "stretch",
+           opacity = 0.4,
+           layer = "below")) 
+
+fig1 <- fig1 %>% layout(
+    xaxis = list(range = c(0, 99)),
+    yaxis = list(range = c(0, 99)))
+
+fig1
+```
+
+```{r}
+fig2 <- pavillion_frequent1 %>% 
+  plot_ly(x = ~X,
+    y = ~Y,
+    frame = ~Timestamp,
+    type = 'scatter',
+    mode = 'markers',
+    color = ~id,
+    colors = "dark green",
+    text = ~Timestamp,
+    title = "Figure 2: Animated Plot of 575508's movement over time") %>%
+    layout(
+      images = list(source = "https://raw.githubusercontent.com/mariumtapal/sds235-dc2/main/Park%20Map.jpg",
+           xref = "x",
+           yref = "y",
+           x = 0,
+           y = 99,
+           sizex = 100,
+           sizey = 100,
+           sizing = "stretch",
+           opacity = 0.4,
+           layer = "below")) 
+
+fig2 <- fig2 %>% layout(
+    xaxis = list(range = c(0, 99)),
+    yaxis = list(range = c(0, 99)))
+
+fig2
+```
+
+320392’s movement starts at 12:07, and they go to the pavilion at 12:08. Then they turn and go back the way they came, going down to ride the Galactasaurus Rage at 12:11 and leaving it at 12:20. From there they go back into the pavilion at 12:23 and then travel on to the right. See figures 3 and 4.
+
+```{r}
+fig3 <- pavillion_frequent2 %>% 
+  plot_ly(x = ~X,
+    y = ~Y,
+    type = 'scatter',
+    mode = 'markers',
+    color = ~id,
+    colors = "blue",
+    text = ~Timestamp,
+    title = "Figure 3: Static Plot of 320392's movement from 12 to 12:30 PM") %>%
+    layout(
+      images = list(source = "https://raw.githubusercontent.com/mariumtapal/sds235-dc2/main/Park%20Map.jpg",
+           xref = "x",
+           yref = "y",
+           x = 0,
+           y = 99,
+           sizex = 100,
+           sizey = 100,
+           sizing = "stretch",
+           opacity = 0.4,
+           layer = "below")) 
+
+fig3 <- fig3 %>% layout(
+    xaxis = list(range = c(0, 99)),
+    yaxis = list(range = c(0, 99)))
+
+fig3
+```
+
+```{r}
+fig4 <- pavillion_frequent2 %>% 
+  plot_ly(x = ~X,
+    y = ~Y,
+    frame = ~Timestamp,
+    type = 'scatter',
+    mode = 'markers',
+    color = ~id,
+    colors = "blue",
+    text = ~Timestamp,
+    title = "Figure 4: Animated Plot of 320392's movement over time") %>%
+    layout(
+      images = list(source = "https://raw.githubusercontent.com/mariumtapal/sds235-dc2/main/Park%20Map.jpg",
+           xref = "x",
+           yref = "y",
+           x = 0,
+           y = 99,
+           sizex = 100,
+           sizey = 100,
+           sizing = "stretch",
+           opacity = 0.4,
+           layer = "below")) 
+
+fig4 <- fig4 %>% layout(
+    xaxis = list(range = c(0, 99)),
+    yaxis = list(range = c(0, 99)))
+
+fig4
+```
 
 Finally, 1826870 starts at 12:09 and goes past the pavilion but not into it at 12:10. From there they go down to the atmosfear ride, which they check into at 12:12. When they leave at 12:14 they go back the way they came, and this time go into the pavilion at 12:16. Then they go and check in to Galactasaurus Rage at 12:20, which they exit at 12:29. They exit the ride at the exact time id 575508 is passing by the ride, but then they go in the opposite direction of 575508. See figs 5 and 6 in enesmith.rmd.
 
+```{r}
+fig5 <- pavillion_frequent3 %>% 
+  plot_ly(x = ~X,
+    y = ~Y,
+    type = 'scatter',
+    mode = 'markers',
+    color = ~id,
+    colors = "black",
+    text = ~Timestamp,
+    title = "Figure 5: Static Plot of 1826870's movement from 12 to 12:30 PM ") %>%
+    layout(
+      images = list(source = "https://raw.githubusercontent.com/mariumtapal/sds235-dc2/main/Park%20Map.jpg",
+           xref = "x",
+           yref = "y",
+           x = 0,
+           y = 99,
+           sizex = 100,
+           sizey = 100,
+           sizing = "stretch",
+           opacity = 0.4,
+           layer = "below")) 
+
+fig5 <- fig5 %>% layout(
+    xaxis = list(range = c(0, 99)),
+    yaxis = list(range = c(0, 99)))
+
+fig5
+```
+
+```{r}
+fig6 <- pavillion_frequent3 %>% 
+  plot_ly(x = ~X,
+    y = ~Y,
+    frame = ~Timestamp,
+    type = 'scatter',
+    mode = 'markers',
+    color = ~id,
+    colors = "black",
+    text = ~Timestamp,
+    title = "Figure 6: Animated Plot of 1826870's movement over time") %>%
+    layout(
+      images = list(source = "https://raw.githubusercontent.com/mariumtapal/sds235-dc2/main/Park%20Map.jpg",
+           xref = "x",
+           yref = "y",
+           x = 0,
+           y = 99,
+           sizex = 100,
+           sizey = 100,
+           sizing = "stretch",
+           opacity = 0.4,
+           layer = "below")) 
+
+fig6 <- fig6 %>% layout(
+    xaxis = list(range = c(0, 99)),
+    yaxis = list(range = c(0, 99)))
+
+fig6
+```
+
 In putting all of these together, it is hard to know if these are just coincidences or suspicious activity. However, it is possible that when 575508 and 320392 both went to the pavilion at 12:23 (coming from different directions) they did something (stole the medal?) and left a little less than a minute apart, both traveling to the right. From there 575508 could have ridden Wrightiraptor Mountain again to avoid suspicion, then traveled to Galactasaurus Rage to meet up with 1826870, pass off the medal, and head their separate ways. Again, it is definitely possible these are just park visitors enjoying these rides, but because of the time frame and the location it feels significant. Maybe they were actually riding the rides to kill time before scheduled meet ups and to appear less conspicuous. 
 
-***important update! I was looking at the communications data to the two important ids from Marium’s work and searched for the three ids I plotted (575508, 320392, and 1826870). There are two messages from 575508 to 839736 (one of the two ids with the most communications) at 12:23 pm, which would have been the time that 575508 and 320392 would have entered the pavilion. Additionally, there are five messages from 320392 to 839736: one at 12:08, when 320392 is at the pavilion the first time; two at 12:23, when they get to it the second time; and two at 12:24, when they are leaving the pavilion. Finally, there are four messages from 1826870 to 839736: two at 12:16, when 1826870 enters the pavilion, and two at 12:43 (I looked at the data for this id at 12:43 and it appears they are back at the pavilion). This definitely seems to incriminate 575508, 320392, and 1826870 more! It is possible that 839736 is a facilities worker or something at the park, and these ids were all reporting the vandalism at the pavilion, but I’m not so sure about that.
+Looking at the communications data for messages to 839736 and 1278894 (the two significant IDs) and searched for the three IDs above (575508, 320392, and 1826870). There are two messages from 575508 to 839736 at 12:23 pm, which would have been the time that 575508 and 320392 would have entered the pavilion. Additionally, there are five messages from 320392 to 839736: one at 12:08, when 320392 is at the pavilion the first time; two at 12:23, when they get to it the second time; and two at 12:24, when they are leaving the pavilion. Finally, there are four messages from 1826870 to 839736: two at 12:16, when 1826870 enters the pavilion, and two at 12:43 (when looking at the data for this ID at 12:43 and it appears they are back at the pavilion). This definitely seems to incriminate 575508, 320392, and 1826870 more! It is possible that 839736 is a facilities worker at the park, and these IDs were all reporting the vandalism at the pavilion, but we're not so sure about that.
 
  
