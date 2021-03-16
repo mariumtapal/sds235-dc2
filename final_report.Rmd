@@ -4,16 +4,18 @@ author: "Marium Tapal, Eleni Partakki, Lauren Low, Elisabeth Nesmith"
 date: "16 March 2021"
 output: 
   html_document:
-    code_folding: show
+    code_folding: hide
     theme: cosmo
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-                      warning = FALSE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE
+)
 ```
 
-```{r packages}
+```{r packages, message=FALSE}
 library(tidyverse)
 library(lubridate)
 library(patchwork)
@@ -91,12 +93,7 @@ Our next step was to track the movements of these individuals, but the movement 
 Furthering this investigation of what caused these spikes in the number of messages sent and received, we sorted the communications by sender and receiver pairs which hinted that something was happening on Sunday: 
 
 ```{r comm-data-3}
-data_from_to <- comm_data %>%
-  group_by(from, to, day) %>%
-  count()
-ggplot(data_from_to, aes(x = to, y = n, color = day)) +
-  geom_point() +
-  labs(title = "All Communications by Sender and Receiver Pairs")
+knitr::include_graphics("all_comm_plot.png")
 ```
 
 We then looked into the hourly and minutely data on Sunday for our suspects! IDs 839736 and 1278894.
@@ -145,17 +142,55 @@ ggplot(hour_sun_to, aes(x = hour, y = n)) +
 ```
 
 ## Movement Data
-Beyond communication data, we thought it might be helpful to sort id values based on those most frequently moving around the park.  On Friday the top five ids with the highest amount of movement data are 331284, 1185012, 2065364, 2075534, 171132.  Saturday’s id values with the most movement are 999107, 685884, 697057, 1723967, 953651 and Sunday’s are 1529852, 1566766, 1131984, 1934504, 871111. 
 
-(laurens bar plots here)
+Beyond communication data, we thought it might be helpful to sort id values based on those most frequently moving around the park.  On Friday the top five ids with the highest amount of movement data are 331284, 1185012, 2065364, 2075534, 171132. Saturday’s id values with the most movement are 999107, 685884, 697057, 1723967, 953651 and Sunday’s are 1529852, 1566766, 1131984, 1934504, 871111. 
 
-Since we saw an uptick in communication toward the end of the weekend, we decided to narrow our movement data search to Sunday.  We began by statically plotting the locations of each id value, without incorporating the Timestamp variable.  As we can see the five ids that moved around the most on Sunday crossed paths quite a bit, namely 1529852, 1566766, 1131984 and 1934504 around the Kiddie Land area.  
+```{r move-data-1}
+fri_frequent_id <- park_movement_Fri %>%
+  group_by(id) %>%
+  count(id, sort = TRUE) %>%
+  filter(n >= 2900)
 
-(laurens static plot)
+sat_frequent_id <- park_movement_Sat %>%
+  group_by(id) %>%
+  count(id, sort = TRUE) %>%
+  filter(n >= 2379)
 
-When factoring time, we noticed that almost none of the top five most frequently moving ids on sunday overlapped with each other – that is, each id was found moving at a different time.  This could be a coincidence (maybe workers were transporting a specific tool across DINOFUN WORLD).  However, this makes us suspicious that these particular id were meeting up for nefarious reasons.  
+sun_frequent_id <- park_movement_Sun %>%
+  group_by(id) %>%
+  count(id, sort = TRUE) %>%
+  filter(n >= 2400)
 
-(lauren’s animated plot)
+freq_fri_plot <- ggplot(data = fri_frequent_id, aes(x = reorder(id, n), y = n)) +
+  geom_bar(stat = "identity")
+freq_fri_plot
+
+freq_sat_plot <- ggplot(data = sat_frequent_id, aes(x = reorder(id, n), y = n)) +
+  geom_bar(stat = "identity")
+freq_sat_plot
+
+freq_sun_plot <- ggplot(data = sun_frequent_id, aes(x = reorder(id, n), y = n)) +
+  geom_bar(stat = "identity")
+freq_sun_plot
+```
+
+Since we saw an uptick in communication toward the end of the weekend, we decided to narrow our movement data search to Sunday. We began by statically plotting the locations of each id value, without incorporating the Timestamp variable. As we can see the five ids that moved around the most on Sunday crossed paths quite a bit, namely 1529852, 1566766, 1131984 and 1934504 around the Kiddie Land area.  
+
+```{r move-data-2}
+sun_1529852 <- park_movement_Sun %>%
+  group_by(id) %>%
+  summarize(Timestamp, type, X, Y) %>%
+  filter(id == 1529852 | id == 1566766 | id == 1131984 | id == 1934504 | id == 871111) %>%
+  slice(1:50)
+sun_1529852
+gg <- ggplot(sun_1529852, aes(X, Y, color = id, ids = id)) +
+  geom_point(aes(frame = Timestamp))
+```
+When factoring time, we noticed that almost none of the top five most frequently moving ids on sunday overlapped with each other – that is, each id was found moving at a different time. This could be a coincidence (maybe workers were transporting a specific tool across DINOFUN WORLD). However, this makes us suspicious that these particular id were meeting up for nefarious reasons.  
+
+```{r move-data-3}
+ggplotly(gg)
+```
 
 
 To narrow the amount of movement data we were looking at, we filtered the data down to movements between 12 and 12:30 PM, as that is when the abrupt increase in messages sent occurred. Furthermore, we know the crime occurred at the Creighton Pavilion, so we filtered the movement data to only include coordinates encompassing the pavilion (between 20 and 45 for X and 15 and 40 for Y). 
@@ -173,5 +208,3 @@ In putting all of these together, it is hard to know if these are just coinciden
 ***important update! I was looking at the communications data to the two important ids from Marium’s work and searched for the three ids I plotted (575508, 320392, and 1826870). There are two messages from 575508 to 839736 (one of the two ids with the most communications) at 12:23 pm, which would have been the time that 575508 and 320392 would have entered the pavilion. Additionally, there are five messages from 320392 to 839736: one at 12:08, when 320392 is at the pavilion the first time; two at 12:23, when they get to it the second time; and two at 12:24, when they are leaving the pavilion. Finally, there are four messages from 1826870 to 839736: two at 12:16, when 1826870 enters the pavilion, and two at 12:43 (I looked at the data for this id at 12:43 and it appears they are back at the pavilion). This definitely seems to incriminate 575508, 320392, and 1826870 more! It is possible that 839736 is a facilities worker or something at the park, and these ids were all reporting the vandalism at the pavilion, but I’m not so sure about that.
 
  
-
-

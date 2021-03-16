@@ -23,7 +23,6 @@ comm_data_Sun <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Commu
 glimpse(comm_data_Fri)
 
 # change timestamp to date and times
-# could have done this after rbind but if we want to use dfs separately 
 comm_data_Fri$Timestamp <- parse_date_time(comm_data_Fri$Timestamp, "YmdHMS")
 comm_data_Sat$Timestamp <- parse_date_time(comm_data_Sat$Timestamp, "YmdHMS")
 comm_data_Sun$Timestamp <- parse_date_time(comm_data_Sun$Timestamp, "YmdHMS")
