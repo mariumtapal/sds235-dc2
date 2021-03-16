@@ -1,11 +1,11 @@
 ---
-title: 'DC2: Final Report'
+title: '**DC2: Final Report**'
 author: "Marium Tapal, Eleni Partakki, Lauren Low, Elisabeth Nesmith"
 date: "16 March 2021"
 output: 
   html_document:
     code_folding: hide
-    theme: cosmo
+    theme: sandstone
 ---
 
 ```{r setup, include=FALSE}
@@ -459,11 +459,23 @@ In putting all of these together, it is hard to know if these are just coinciden
 Looking at the communications data for messages to 839736 and 1278894 (the two significant IDs) and searched for the three IDs above (575508, 320392, and 1826870). There are two messages from 575508 to 839736 at 12:23 pm, which would have been the time that 575508 and 320392 would have entered the pavilion. Additionally, there are five messages from 320392 to 839736: one at 12:08, when 320392 is at the pavilion the first time; two at 12:23, when they get to it the second time; and two at 12:24, when they are leaving the pavilion. Finally, there are four messages from 1826870 to 839736: two at 12:16, when 1826870 enters the pavilion, and two at 12:43 (when looking at the data for this ID at 12:43 and it appears they are back at the pavilion). This definitely seems to incriminate 575508, 320392, and 1826870 more! It is possible that 839736 is a facilities worker at the park, and these IDs were all reporting the vandalism at the pavilion, but we're not so sure about that.
 
 ### **Insertion from Tableau**
-![](communication3.png)
+
+### Communication over the weekend
+
+Communication over the weekend seems to be somewhat steady except strange drops. This may be a result of a break in the app, or perhaps partial breaks in the app for some areas. That can be clearly seen on Saturday midday.
 
 ![](communication3.png)
+
+As my partners and I started closing in on Sunday being the day of the crime, I visualized the peak hours of communication, and those are at noon. My thought is that the crime must have happened right before that hour, and as a result people are calling/texting to figure out what is happening.
 
 ![](sundayhour.png)
 
+Due to my mistrust of circles and pie chart look-alikes, I checked the hours on Sunday with a different visualization that also clarified my point about the crime happening before or right around noon.
+
 ![](sunday.png)
-![](location.png)
+
+
+
+# **Conslusion**
+
+Overall, we may not have names, but someone did commit a crime, and it happened on Sunday at the Pavilion. It was a busy weekend with many people up to something, now the question remains if they were the ones that were up to no good.
