@@ -1,0 +1,177 @@
+---
+title: 'DC2: Final Report'
+author: "Marium Tapal, Eleni Partakki, Lauren Low, Elisabeth Nesmith"
+date: "16 March 2021"
+output: 
+  html_document:
+    code_folding: show
+    theme: cosmo
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE)
+```
+
+```{r packages}
+library(tidyverse)
+library(lubridate)
+library(patchwork)
+library(raster)
+library(plotly)
+library(gganimate)
+library(kableExtra)
+```
+
+```{r data, message=FALSE}
+comm_data_Fri <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Communication Data/comm-data-Fri.csv")
+comm_data_Sat <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Communication Data/comm-data-Sat.csv")
+comm_data_Sun <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Communication Data/comm-data-Sun.csv")
+park_movement_Fri <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Movement Data/park-movement-Fri.csv")
+park_movement_Sat <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Movement Data/park-movement-Sat.csv")
+park_movement_Sun <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Movement Data/park-movement-Sun.csv")
+```
+
+
+## Communication Data
+
+```{r data-wrangling}
+# change timestamp to datetime type from chr
+comm_data_Fri$Timestamp <- parse_date_time(comm_data_Fri$Timestamp, "YmdHMS")
+comm_data_Sat$Timestamp <- parse_date_time(comm_data_Sat$Timestamp, "YmdHMS")
+comm_data_Sun$Timestamp <- parse_date_time(comm_data_Sun$Timestamp, "YmdHMS")
+
+# add day column to data
+comm_data_Fri <- comm_data_Fri %>% mutate(day = "Friday")
+comm_data_Sat <- comm_data_Sat %>% mutate(day = "Saturday")
+comm_data_Sun <- comm_data_Sun %>% mutate(day = "Sunday")
+
+# Make one df
+comm_data <- rbind(comm_data_Fri, comm_data_Sat, comm_data_Sun)
+
+# factor ids as levels instead of numeric
+comm_data <- comm_data %>% mutate(
+  to = as.factor(to),
+  from = as.factor(from)
+)
+```
+
+Looking into the communication data, the question we first looked to answer who was communicating with whom? Are there anomalies? If so, do they tell us anything about solving the crime?
+
+In the initial exploratory data analysis, looking into the total counts of messages sent and received, there were very apparent outliers in the plot below: 
+
+```{r comm-data-1}
+# counts of data
+sent_data <- comm_data %>%
+  group_by(from, day) %>%
+  count() %>%
+  filter(n > 5000)
+p1 <- ggplot(sent_data, aes(x = from, y = n, color = day)) +
+  geom_point() +
+  labs(title = "Messages Sent")
+received_data <- comm_data %>%
+  group_by(to, day) %>%
+  count() %>%
+  filter(n > 5000)
+p2 <- ggplot(received_data, aes(x = to, y = n, color = day)) +
+  geom_point() +
+  labs(title = "Messages Received")
+p1 + p2
+```
+
+After filtering for these excessive messages, we found that the ID's  839736 and 1278894 (and external person(s)) had an excessive amount of messages sent and received (more than 5000 per day per person):
+
+```{r comm-data-2}
+sent_data %>% filter(n > 5000)
+received_data %>% filter(n > 5000)
+```
+
+Our next step was to track the movements of these individuals, but the movement data does not contain their movements. **We hypothesize that these are park employees since their communication with visitors is being tracked but not their movement.**
+
+Furthering this investigation of what caused these spikes in the number of messages sent and received, we sorted the communications by sender and receiver pairs which hinted that something was happening on Sunday: 
+
+```{r comm-data-3}
+data_from_to <- comm_data %>%
+  group_by(from, to, day) %>%
+  count()
+ggplot(data_from_to, aes(x = to, y = n, color = day)) +
+  geom_point() +
+  labs(title = "All Communications by Sender and Receiver Pairs")
+```
+
+We then looked into the hourly and minutely data on Sunday for our suspects! IDs 839736 and 1278894.
+
+The graphs below suggest that where there was an abrupt increase of **messages sent** at 12:00 pm which lasted for the next 30 minutes. We think that the other spikes every hour could be regular messages sent by the park employees.
+
+```{r comm-data-4}
+comm_data2 <- comm_data %>% mutate(
+  hour = hour(Timestamp),
+  minute = minute(Timestamp)
+)
+# Sunday sent messages hourly
+hour_sun <- comm_data2 %>%
+  filter(from == 839736 | from == 1278894) %>%
+  filter(day == "Sunday") %>%
+  group_by(from, hour) %>%
+  count()
+p3 <- ggplot(hour_sun, aes(x = hour, y = n)) +
+  geom_line() +
+  labs(title = "Messages Sent Per Hour on Sunday")
+
+# look into minutes around on Sunday at noon
+hourmin_sun <- comm_data2 %>%
+  filter(from == 839736 | from == 1278894) %>%
+  filter(day == "Sunday", hour == 12) %>%
+  group_by(from, minute) %>%
+  count()
+p4 <- ggplot(hourmin_sun, aes(x = minute, y = n)) +
+  geom_line() +
+  labs(title = "Messages Sent By the Minute (Sunday at Noon)")
+p3 + p4
+```
+
+Similarly we also checked the messages received by our suspects involved in the crime. These graph below also tells that something happened around at noon. Manually plotting the messages received by the minute on Sunday afternoon that the spike continued until 3:40 pm.
+
+```{r comm-data-5}
+# Sunday received messages hourly
+hour_sun_to <- comm_data2 %>%
+  filter(to == 839736 | to == 1278894) %>%
+  filter(day == "Sunday") %>%
+  group_by(from, hour) %>%
+  count()
+ggplot(hour_sun_to, aes(x = hour, y = n)) +
+  geom_line() +
+  labs(title = "Messages Received Per Hour on Sunday")
+```
+
+## Movement Data
+Beyond communication data, we thought it might be helpful to sort id values based on those most frequently moving around the park.  On Friday the top five ids with the highest amount of movement data are 331284, 1185012, 2065364, 2075534, 171132.  Saturday’s id values with the most movement are 999107, 685884, 697057, 1723967, 953651 and Sunday’s are 1529852, 1566766, 1131984, 1934504, 871111. 
+
+(laurens bar plots here)
+
+Since we saw an uptick in communication toward the end of the weekend, we decided to narrow our movement data search to Sunday.  We began by statically plotting the locations of each id value, without incorporating the Timestamp variable.  As we can see the five ids that moved around the most on Sunday crossed paths quite a bit, namely 1529852, 1566766, 1131984 and 1934504 around the Kiddie Land area.  
+
+(laurens static plot)
+
+When factoring time, we noticed that almost none of the top five most frequently moving ids on sunday overlapped with each other – that is, each id was found moving at a different time.  This could be a coincidence (maybe workers were transporting a specific tool across DINOFUN WORLD).  However, this makes us suspicious that these particular id were meeting up for nefarious reasons.  
+
+(lauren’s animated plot)
+
+
+To narrow the amount of movement data we were looking at, we filtered the data down to movements between 12 and 12:30 PM, as that is when the abrupt increase in messages sent occurred. Furthermore, we know the crime occurred at the Creighton Pavilion, so we filtered the movement data to only include coordinates encompassing the pavilion (between 20 and 45 for X and 15 and 40 for Y). 
+
+To get an idea of who was most active around the pavilion within this time frame, we grouped by id and took the top 3 ids with the largest number of movements. These were 575508, 320392, and 1826870, which had 93, 90, and 88 movements, respectively. Looking at their movements over time, they all have an interesting pattern of walking different sections around the pavilion, often doubling back. Furthermore, looking at how their movements overlap is interesting.
+
+575508 is the id that looks the most suspicious. Their movement starts out at 12:10, when they go and check into Wrightiraptor Mountain ride. They ride this twice. Then they go to the pavilion around 12:23, leave and go back to the same ride and do it a third time. Following this, they leave and go to the left, passing the Galactasaurus Rage ride at 12:29 but not riding it. See figs 1 and 2 in enesmith.rmd.
+
+320392’s movement starts at 12:07, and they go to the pavilion at 12:08. Then they turn and go back the way they came, going down to ride the Galactasaurus Rage at 12:11 and leaving it at 12:20. From there they go back into the pavilion at 12:23 and then travel on to the right. See enesmith.rmd figs 3 and 4.
+
+Finally, 1826870 starts at 12:09 and goes past the pavilion but not into it at 12:10. From there they go down to the atmosfear ride, which they check into at 12:12. When they leave at 12:14 they go back the way they came, and this time go into the pavilion at 12:16. Then they go and check in to Galactasaurus Rage at 12:20, which they exit at 12:29. They exit the ride at the exact time id 575508 is passing by the ride, but then they go in the opposite direction of 575508. See figs 5 and 6 in enesmith.rmd.
+
+In putting all of these together, it is hard to know if these are just coincidences or suspicious activity. However, it is possible that when 575508 and 320392 both went to the pavilion at 12:23 (coming from different directions) they did something (stole the medal?) and left a little less than a minute apart, both traveling to the right. From there 575508 could have ridden Wrightiraptor Mountain again to avoid suspicion, then traveled to Galactasaurus Rage to meet up with 1826870, pass off the medal, and head their separate ways. Again, it is definitely possible these are just park visitors enjoying these rides, but because of the time frame and the location it feels significant. Maybe they were actually riding the rides to kill time before scheduled meet ups and to appear less conspicuous. 
+
+***important update! I was looking at the communications data to the two important ids from Marium’s work and searched for the three ids I plotted (575508, 320392, and 1826870). There are two messages from 575508 to 839736 (one of the two ids with the most communications) at 12:23 pm, which would have been the time that 575508 and 320392 would have entered the pavilion. Additionally, there are five messages from 320392 to 839736: one at 12:08, when 320392 is at the pavilion the first time; two at 12:23, when they get to it the second time; and two at 12:24, when they are leaving the pavilion. Finally, there are four messages from 1826870 to 839736: two at 12:16, when 1826870 enters the pavilion, and two at 12:43 (I looked at the data for this id at 12:43 and it appears they are back at the pavilion). This definitely seems to incriminate 575508, 320392, and 1826870 more! It is possible that 839736 is a facilities worker or something at the park, and these ids were all reporting the vandalism at the pavilion, but I’m not so sure about that.
+
+ 
+
+
