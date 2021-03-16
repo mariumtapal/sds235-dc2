@@ -18,7 +18,3 @@ There are two main components to our analysis:
     `code\...`
 
 GitHub repo: <https://github.com/mariumtapal/sds235-dc2>
-
-Note: Group members used different languages and software to do their
-analysis depending on their preferences. The work was complied in a
-Google Doc to remain language agnostic.
