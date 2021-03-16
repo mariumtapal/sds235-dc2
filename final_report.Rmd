@@ -219,17 +219,20 @@ sun_frequent_id <- park_movement_Sun %>%
 
 freq_fri_plot <- ggplot(data = fri_frequent_id, aes(x = reorder(id, n), y = n)) +
   geom_bar(stat = "identity") +
-  labs(x = "ID value", x = "Number of Movements", title = "ID Values with Most Movements on Friday")
+  labs(x = "ID value", x = "Number of Movements", title = "ID Values with Most Movements on Friday") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 freq_fri_plot
 
 freq_sat_plot <- ggplot(data = sat_frequent_id, aes(x = reorder(id, n), y = n)) +
   geom_bar(stat = "identity") +
-  labs(x = "ID value", x = "Number of Movements", title = "ID Values with Most Movements on Saturday")
+  labs(x = "ID value", x = "Number of Movements", title = "ID Values with Most Movements on Saturday") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 freq_sat_plot
 
 freq_sun_plot <- ggplot(data = sun_frequent_id, aes(x = reorder(id, n), y = n)) +
   geom_bar(stat = "identity") +
-  labs(x = "ID value", x = "Number of Movements", title = "ID Values with Most Movements on Sunday")
+  labs(x = "ID value", x = "Number of Movements", title = "ID Values with Most Movements on Sunday") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 freq_sun_plot
 ```
 
