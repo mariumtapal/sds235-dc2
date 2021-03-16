@@ -13,7 +13,7 @@ library(plotly)
 
 ```{r}
 #load in friday movement data
-#park_movement_Fri <- read.csv("~/Downloads/SDS 235/DC2-data/Movement Data/park-movement-Fri.csv")
+park_movement_Fri <- read.csv("~/Downloads/SDS 235/DC2-data/Movement Data/park-movement-Fri.csv")
 
 park_movement_Sun <- read.csv("~/Downloads/SDS 235/DC2-data/Movement Data/park-movement-Sun.csv")
 ```
@@ -113,6 +113,10 @@ pavillion_data %>%
   group_by(id) %>% 
   count(id, sort = TRUE) %>% 
   filter(n > 80)
+
+park_movement_Sun %>% 
+  filter(id == 1826870) %>% 
+  filter(Timestamp > "2014-6-08 12:00:00" & Timestamp < "2014-6-08 12:45:00")
 ```
 
 ```{r}

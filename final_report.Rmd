@@ -35,7 +35,7 @@ park_movement_Sun <- read_csv("~/Downloads/DC2-data/Movement Data/park-movement-
 ```
 
 ```{r pressure, echo=FALSE, fig.cap="DinoFun World!", out.width = '100%'}
-knitr::include_graphics("map.png")
+knitr::include_graphics("images/map.png")
 ```
 
 # **Summary**
@@ -137,7 +137,7 @@ Our next step was to track the movements of these individuals, but the movement 
 Furthering this investigation of what caused these spikes in the number of messages sent and received, we sorted the communications by sender and receiver pairs which hinted that something was happening on Sunday: 
 
 ```{r comm-data-3}
-knitr::include_graphics("all_comm_plot.png")
+knitr::include_graphics("images/all_comm_plot.png")
 ```
 
 We then looked into the hourly and minutely data on Sunday for our suspects! IDs 839736 and 1278894.
@@ -464,15 +464,15 @@ Looking at the communications data for messages to 839736 and 1278894 (the two s
 
 Communication over the weekend seems to be somewhat steady except strange drops. This may be a result of a break in the app, or perhaps partial breaks in the app for some areas. That can be clearly seen on Saturday midday.
 
-![](communication3.png)
+![](images/communication3.png)
 
 As my partners and I started closing in on Sunday being the day of the crime, I visualized the peak hours of communication, and those are at noon. My thought is that the crime must have happened right before that hour, and as a result people are calling/texting to figure out what is happening.
 
-![](sundayhour.png)
+![](images/sundayhour.png)
 
 Due to my mistrust of circles and pie chart look-alikes, I checked the hours on Sunday with a different visualization that also clarified my point about the crime happening before or right around noon.
 
-![](sunday.png)
+![](images/sunday.png)
 
 
 
