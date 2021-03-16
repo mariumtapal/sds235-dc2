@@ -33,6 +33,7 @@ park_movement_Sat <- read_csv("~/Downloads/DC2-data/Movement Data/park-movement-
 park_movement_Sun <- read_csv("~/Downloads/DC2-data/Movement Data/park-movement-Sun.csv")
 ```
 
+
 # Summary
 
 DinoFun World is an amusement park declared “Scott Jones Weekend”, where Scott was scheduled to appear in two stage shows each on Friday, Saturday, and Sunday to talk about his life and career. However, the event did not go as planned. Scott’s weekend was marred by crime and mayhem perpetrated by a poor, misguided and disgruntled figure from Scott’s past.
@@ -44,7 +45,6 @@ We have had a lot of suspicions, but I think we can make an estimated guess abou
 
 We believe that the distraction in the pavilion happened out of jealousy.
 
-
 ### When did the crime occur?
 We think that on Sunday, sometime in the morning, right before noon due to the movement and communication data we have gathered.
 
@@ -54,40 +54,24 @@ Someone damaged something in the Creighton Pavilion as we knew from the news art
 ### Who are the most likely suspects in the crime?
 We believe it could be Lonzo, Eddie and/or Marcus.
 
-## Characterize different kinds of groups that visited the park on this weekend (family units, school groups, etc.)
-
-### How big is the group type?
-???
-
-### Where does this type of group like to go in the park?
-????
-
-### How common is this type of group?
-???
-
-### What are your other observations about this type of group?
-???
-
-### What can you infer about the group?
-???
-
-### If you were to make one improvement to the park to better meet this group’s needs, what would it be?
-???
-
-## Are there notable differences in the patterns of activity on in the park across the three days?
+### Are there notable differences in the patterns of activity on in the park across the three days?
 The noteable differences in the patterns of activity are the increase in communication at certain parts of the day on Sunday, as a result to the crime. We also believe that the DinoFun World app may have failed a few times on Saturday and Sunday as the communication data is not fantastic. This may have been an accident or on purpose.
 
-## What anomalies or unusual movement patterns do you see?
+### What anomalies or unusual movement patterns do you see?
 1983765 has duplicate entries on Saturday. Is this an error or the real crime?
 
-## Who is communicating, with whom, when and where?
-???
+### Who is communicating, with whom, when and where?
+It looks like id:839736 and id:1278894 are communicating the most on each day, with messages exceeding 5000 per day per person. Initially we thought these may have been the suspects, but we are not convinved because the ones committing the crime would not be communicating this actively over the app in fear of being traced. Our guess is these numbers must be a support number in the park as well as perhaps the security communicating back and forth, having check-ins.
 
-## Scott Jones is a VIP (not a paying customer) and therefore does not have an ID. Describe his activities in the park during the three-day weekend.
+### Scott Jones is a VIP (not a paying customer) and therefore does not have an ID. Describe his activities in the park during the three-day weekend.
 Some activities that we know Scott participated in based on the calendar of events for the weekend, are a Q&A with the audience, a live demonstration of his soccer moves and two shows daily at the Amazing Scott Showcase Show.
 
-## Were there any issues with park operations during the three-day weekend?
+### Were there any issues with park operations during the three-day weekend?
 We believe the app may have failed on Saturday and Sunday due to strange patterns.
+
+
+
+
 
 
 # Further Analysis
