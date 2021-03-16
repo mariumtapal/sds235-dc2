@@ -22,17 +22,75 @@ library(patchwork)
 library(raster)
 library(plotly)
 library(gganimate)
-library(kableExtra)
 ```
 
 ```{r data, message=FALSE}
-comm_data_Fri <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Communication Data/comm-data-Fri.csv")
-comm_data_Sat <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Communication Data/comm-data-Sat.csv")
-comm_data_Sun <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Communication Data/comm-data-Sun.csv")
-park_movement_Fri <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Movement Data/park-movement-Fri.csv")
-park_movement_Sat <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Movement Data/park-movement-Sat.csv")
-park_movement_Sun <- read_csv("~/Documents/Spring 2021/SDS 235/sds235-dc2/data/Movement Data/park-movement-Sun.csv")
+comm_data_Fri <- read_csv("~/Downloads/DC2-data/Communication Data/comm-data-Fri.csv")
+comm_data_Sat <- read_csv("~/Downloads/DC2-data/Communication Data/comm-data-Sat.csv")
+comm_data_Sun <- read_csv("~/Downloads/DC2-data/Communication Data/comm-data-Sun.csv")
+park_movement_Fri <- read_csv("~/Downloads/DC2-data/Movement Data/park-movement-Fri.csv")
+park_movement_Sat <- read_csv("~/Downloads/DC2-data/Movement Data/park-movement-Sat.csv")
+park_movement_Sun <- read_csv("~/Downloads/DC2-data/Movement Data/park-movement-Sun.csv")
 ```
+
+# Summary
+
+DinoFun World is an amusement park declared “Scott Jones Weekend”, where Scott was scheduled to appear in two stage shows each on Friday, Saturday, and Sunday to talk about his life and career. However, the event did not go as planned. Scott’s weekend was marred by crime and mayhem perpetrated by a poor, misguided and disgruntled figure from Scott’s past.
+
+Our mission was to help law enforcement figures understand what happened and to better equip them for future incidents. To help is with our analysis, we used movement and communication data, a map, a short news report, as well as whatever was available on the park's website. We also used a map, a short news report
+
+## What happened during the weekend of the Scott Jones celebration?
+We have had a lot of suspicions, but I think we can make an estimated guess about what happened. After reading Scott Jones biography (https://jcrouser.github.io/CSC235/dinofunworld/events-calendar/index.html) where he mentions that “We – Lonzo, Eddie, Marcus and I – played football, er, soccer after school, weekends, every minute we could.  We were always together.  Right after homework was done we’d be out in the street, kicking the ball”, we realized that there may have been an incentive by one of the three friends that Scott had, since we are later informed that "Scott and two of his friends received college scholarships. This ultimately means that one did not. Is that Lonzo? Eddie? or Marcus? We do not know, but we do have some ID information.
+
+We believe that the distraction in the pavilion happened out of jealousy.
+
+
+### When did the crime occur?
+We think that on Sunday, sometime in the morning, right before noon due to the movement and communication data we have gathered.
+
+### Where did the crime take place?
+Someone damaged something in the Creighton Pavilion as we knew from the news article that "individuals who vandalized a pavilion exhibiting Jones’s memorabilia and made off with an Olympic medal and possibly other irreplaceable items."
+
+### Who are the most likely suspects in the crime?
+We believe it could be Lonzo, Eddie and/or Marcus.
+
+## Characterize different kinds of groups that visited the park on this weekend (family units, school groups, etc.)
+
+### How big is the group type?
+???
+
+### Where does this type of group like to go in the park?
+????
+
+### How common is this type of group?
+???
+
+### What are your other observations about this type of group?
+???
+
+### What can you infer about the group?
+???
+
+### If you were to make one improvement to the park to better meet this group’s needs, what would it be?
+???
+
+## Are there notable differences in the patterns of activity on in the park across the three days?
+The noteable differences in the patterns of activity are the increase in communication at certain parts of the day on Sunday, as a result to the crime. We also believe that the DinoFun World app may have failed a few times on Saturday and Sunday as the communication data is not fantastic. This may have been an accident or on purpose.
+
+## What anomalies or unusual movement patterns do you see?
+1983765 has duplicate entries on Saturday. Is this an error or the real crime?
+
+## Who is communicating, with whom, when and where?
+???
+
+## Scott Jones is a VIP (not a paying customer) and therefore does not have an ID. Describe his activities in the park during the three-day weekend.
+Some activities that we know Scott participated in based on the calendar of events for the weekend, are a Q&A with the audience, a live demonstration of his soccer moves and two shows daily at the Amazing Scott Showcase Show.
+
+## Were there any issues with park operations during the three-day weekend?
+We believe the app may have failed on Saturday and Sunday due to strange patterns.
+
+
+# Further Analysis
 
 
 ## Communication Data
